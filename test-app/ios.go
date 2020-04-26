@@ -12,7 +12,7 @@ import "fmt"
 */
 import "C"
 
-//export test_app_two
-func test_app_two() {
-	fmt.Println("ios.go: two")
+//export test_app_go
+func test_app_go() {
+	fmt.Println("ios.go: test_app_go")
 }
