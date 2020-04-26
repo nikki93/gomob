@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 
+@import TestApp;
+
 @interface AppDelegate ()
 
 @end
@@ -16,6 +18,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    test_app_one();
+    
     // Override point for customization after application launch.
     return YES;
 }

@@ -29,6 +29,7 @@
 		A10F9CBF2455840B00EF51B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A10F9CC12455840B00EF51B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10F9CC22455840B00EF51B4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A1D9FE9A245588DD00AC20B3 /* Test-App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "Test-App.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +48,7 @@
 			children = (
 				A10F9CAF2455840A00EF51B4 /* gomob-test-app */,
 				A10F9CAE2455840A00EF51B4 /* Products */,
+				A1D9FE99245588DD00AC20B3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,6 +76,14 @@
 				A10F9CC22455840B00EF51B4 /* main.m */,
 			);
 			path = "gomob-test-app";
+			sourceTree = "<group>";
+		};
+		A1D9FE99245588DD00AC20B3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A1D9FE9A245588DD00AC20B3 /* Test-App.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,7 +300,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5UVVZ557T;
+				DEVELOPMENT_TEAM = 6PUB3623F7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "gomob-test-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,7 +321,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = T5UVVZ557T;
+				DEVELOPMENT_TEAM = 6PUB3623F7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "gomob-test-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

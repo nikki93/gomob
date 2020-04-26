@@ -53,7 +53,7 @@ func iosCompilerFor(target, arch string) (string, []string, error) {
 func BuildIOSFramework(tmpDir string, bi *BuildInfo) error {
 	frameworkRoot := *destPath
 	if frameworkRoot == "" {
-		frameworkRoot = fmt.Sprintf("%s.framework", strings.Title(bi.name))
+		frameworkRoot = fmt.Sprintf("%s.framework", strings.ReplaceAll(strings.Title(bi.name), "-", ""))
 	}
 	target := bi.target
 	framework := filepath.Base(frameworkRoot)

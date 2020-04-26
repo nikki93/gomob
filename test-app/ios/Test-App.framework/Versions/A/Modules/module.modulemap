@@ -1,5 +1,0 @@
-framework module "Test-App" {
-    header "Test-App.h"
-
-    export *
-}
