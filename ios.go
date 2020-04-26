@@ -47,6 +47,9 @@ func iosCompilerFor(target, arch string) (string, []string, error) {
 		"-isysroot", sdkPath,
 		"-m" + platformOS + "-version-min=" + minIOSVersion,
 	}
+	if *debug {
+		cflags = append(cflags, "-g")
+	}
 	return clang, cflags, nil
 }
 

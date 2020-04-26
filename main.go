@@ -22,6 +22,7 @@ var (
 	iosHeader     = flag.String("iosheader", "ios.h", "input framework header (for -target=ios,tvos)")
 	version       = flag.Int("version", 1, "app version (for -buildmode=exe)")
 	printCommands = flag.Bool("x", false, "print the commands")
+	debug         = flag.Bool("debug", false, "include C debug info")
 	keepWorkdir   = flag.Bool("work", false, "print the name of the temporary work directory and do not delete it when exiting.")
 )
 
