@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -17,17 +18,59 @@ import (
 var (
 	target        = flag.String("target", "", "specify target (ios, tvos, android, js).\n")
 	archNames     = flag.String("arch", "", "specify architecture(s) to include (arm, arm64, amd64).")
-	minsdk        = flag.Int("minsdk", 16, "specify minimum supported Android platform sdk version (e.g. 28 for android28 a.k.a. Android 9 Pie).")
+	minSDK        = flag.Int("minsdk", 16, "specify minimum supported Android platform sdk version (e.g. 28 for android28 a.k.a. Android 9 Pie).")
 	buildMode     = flag.String("buildmode", "exe", "specify buildmode (archive, exe)")
 	destPath      = flag.String("o", "", "output file or directory.\nFor -target ios or tvos, use the .app suffix to target simulators.")
 	appID         = flag.String("appid", "", "app identifier (for -buildmode=exe)")
+	iosHeader     = flag.String("iosheader", "ios/framework.h", "input framework header (for -target=ios,tvos)")
 	version       = flag.Int("version", 1, "app version (for -buildmode=exe)")
 	printCommands = flag.Bool("x", false, "print the commands")
 	keepWorkdir   = flag.Bool("work", false, "print the name of the temporary work directory and do not delete it when exiting.")
 )
 
 func main() {
-	BuildIOSFramework("tmp")
+	flag.Usage = func() {
+		fmt.Fprint(os.Stderr, "TODO: usage")
+	}
+	flag.Parse()
+	fmt.Printf("iosHeader: %s\n", *iosHeader)
+	if err := mainErr(); err != nil {
+		fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[0], err)
+		os.Exit(1)
+	}
+	os.Exit(0)
+}
+
+func mainErr() error {
+	pkg := flag.Arg(0)
+	if pkg == "" {
+		return errors.New("specify a package")
+	}
+	pkgImportPath, err := runCmd(exec.Command("go", "list", "-f", "{{.ImportPath}}", pkg))
+	if err != nil {
+		return err
+	}
+	dir, err := runCmd(exec.Command("go", "list", "-f", "{{.Dir}}", pkg))
+	if err != nil {
+		return err
+	}
+	pkgImportPathElems := strings.Split(pkgImportPath, "/")
+
+	bi := &BuildInfo{
+		name:    pkgImportPathElems[len(pkgImportPathElems)-1],
+		pkg:     pkg,
+		target:  *target,
+		appID:   *appID,
+		dir:     dir,
+		version: *version,
+		minSDK:  *minSDK,
+	}
+
+	frameworkRoot := *destPath
+	if frameworkRoot == "" {
+		frameworkRoot = fmt.Sprintf("%s.framework", strings.Title(bi.name))
+	}
+	return BuildIOSFramework("tmp", frameworkRoot, bi)
 }
 
 //
@@ -43,7 +86,7 @@ type BuildInfo struct {
 	version int
 	dir     string
 	archs   []string
-	minsdk  int
+	minSDK  int
 }
 
 func runCmdRaw(cmd *exec.Cmd) ([]byte, error) {
@@ -156,7 +199,8 @@ func iosCompilerFor(target, arch string) (string, []string, error) {
 	return clang, cflags, nil
 }
 
-func BuildIOSFramework(tmpDir, target, frameworkRoot string, bi *BuildInfo) error {
+func BuildIOSFramework(tmpDir, frameworkRoot string, bi *BuildInfo) error {
+	target := bi.target
 	framework := filepath.Base(frameworkRoot)
 	const suf = ".framework"
 	if !strings.HasSuffix(framework, suf) {
@@ -192,7 +236,7 @@ func BuildIOSFramework(tmpDir, target, frameworkRoot string, bi *BuildInfo) erro
 		if err != nil {
 			return err
 		}
-		lib := filepath.Join(tmpDir, "gio-"+a)
+		lib := filepath.Join(tmpDir, "build-"+a)
 		cmd := exec.Command(
 			"go",
 			"build",
@@ -224,13 +268,8 @@ func BuildIOSFramework(tmpDir, target, frameworkRoot string, bi *BuildInfo) erro
 	if _, err := runCmd(lipo); err != nil {
 		return err
 	}
-	appDir, err := runCmd(exec.Command("go", "list", "-f", "{{.Dir}}", "gioui.org/app/internal/window"))
-	if err != nil {
-		return err
-	}
 	headerDst := filepath.Join(frameworkDir, "Headers", framework+".h")
-	headerSrc := filepath.Join(appDir, "framework_ios.h")
-	if err := copyFile(headerDst, headerSrc); err != nil {
+	if err := copyFile(headerDst, *iosHeader); err != nil {
 		return err
 	}
 	module := fmt.Sprintf(`framework module "%s" {
