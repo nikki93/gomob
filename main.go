@@ -100,7 +100,7 @@ func Build(bi *BuildInfo) error {
 			bi.archs = []string{"wasm"}
 		case "ios", "tvos":
 			// Only 64-bit support.
-			bi.archs = []string{"arm64", "amd64"}
+			bi.archs = []string{"arm64"}
 		case "android":
 			bi.archs = []string{"arm", "arm64", "386", "amd64"}
 		}
