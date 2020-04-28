@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -95,15 +96,33 @@ func BuildIOSFramework(tmpDir string, bi *BuildInfo) error {
 			return err
 		}
 		lib := filepath.Join(tmpDir, "build-"+a)
-		cmd := exec.Command(
-			"go",
+		args := []string{
 			"build",
-			"-ldflags=-s -w "+bi.ldflags,
+			"-ldflags=-s -w " + bi.ldflags,
 			"-buildmode=c-archive",
 			"-o", lib,
 			"-tags", "ios",
-			bi.pkg,
-		)
+		}
+		if *keepWorkdir {
+			args = append(args, "-work")
+		}
+		if *printCommands {
+			args = append(args, "-x")
+		}
+		args = append(args, bi.pkg)
+		cmd := exec.Command("go", args...)
+		if *printCommands {
+			stdout, err := cmd.StdoutPipe()
+			if err != nil {
+				return err
+			}
+			stderr, err := cmd.StderrPipe()
+			if err != nil {
+				return err
+			}
+			go io.Copy(os.Stdout, stdout)
+			go io.Copy(os.Stderr, stderr)
+		}
 		lipo.Args = append(lipo.Args, lib)
 		cflagsLine := strings.Join(cflags, " ")
 		cmd.Env = append(
@@ -116,8 +135,7 @@ func BuildIOSFramework(tmpDir string, bi *BuildInfo) error {
 			"CGO_LDFLAGS="+cflagsLine,
 		)
 		builds.Go(func() error {
-			_, err := runCmd(cmd)
-			return err
+			return cmd.Run()
 		})
 	}
 	if err := builds.Wait(); err != nil {
