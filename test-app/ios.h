@@ -1,2 +1,2 @@
-void test_app_objc();
+void test_app_objc(void);
 
