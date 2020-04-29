@@ -91,6 +91,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A10F9CC62455840B00EF51B4 /* Build configuration list for PBXNativeTarget "gomob-test-app" */;
 			buildPhases = (
+				A1B6B7B324590DBF00E57D21 /* Build Go '.framework' */,
 				A10F9CA92455840A00EF51B4 /* Sources */,
 				A10F9CAA2455840A00EF51B4 /* Frameworks */,
 				A10F9CAB2455840A00EF51B4 /* Resources */,
@@ -148,6 +149,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1B6B7B324590DBF00E57D21 /* Build Go '.framework' */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Go '.framework'";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncd $PROJECT_DIR/..\ngo run github.com/nikki93/gomob -target ios -iosheader ios.h -o ios/TestApp.framework .\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A10F9CA92455840A00EF51B4 /* Sources */ = {
